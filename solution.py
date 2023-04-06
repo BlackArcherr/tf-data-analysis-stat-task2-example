@@ -1,16 +1,11 @@
 import pandas as pd
 import numpy as np
 
-from scipy.stats import norm
+import scipy.stats as stats
 
 chat_id = 474140315
 
 def solution(p: float, x: np.array) -> tuple:
-    a = 2 * x / 92**2
-    x_bar = np.mean(a)
-    s = np.std(a, ddof=1)
-    se = s / np.sqrt(len(x))
-    z = norm.ppf((1 + p) / 2)
-    me = z * se
-    ci = (x_bar - me, x_bar + me)
-    return ci
+    l = 2*(stats.erlang.ppf((1-p)/2, len(x), loc=0, scale=1/len(x)) + np.mean(x) - 1/2) / 92**2
+    r = 2*(stats.erlang.ppf(1-(1-p)/2, len(x), loc=0, scale=1/len(x)) + np.mean(x) - 1/2) / 92**2
+    return l, r
